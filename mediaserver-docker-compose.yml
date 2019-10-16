@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  sabnzbd:
+    image: sabnzbd/sabnzbd:latest
+    ports:
+    - 8080:8080/tcp
+    volumes:
+    - ~/sabnzbd:/datadir:rw
+    - /e/tvshows:/media:rw
+
+  sickgear:
+    image: sickgear/sickgear:latest
+    ports:
+    - 8081:8081/tcp
+    volumes:
+    - ~/sabnzbd/Downloads/complete:/incoming:rw
+    - ~/sickgear:/data:rw
+    - /e/tvshows:/tv:rw

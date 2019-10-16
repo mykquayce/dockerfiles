@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    ports:
+    - 3306:3306/tcp
+    environment:
+    - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-root-password
+    secrets:
+    - source: mysql-root-password
+    volumes:
+    - mariadb-volume:/var/lib/mysql:rw
+
+secrets:
+  mysql-root-password:
+    external: true
+    name: mysql-root-password
+
+volumes:
+  mariadb-volume: {}

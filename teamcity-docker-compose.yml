@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  server:
+    image: jetbrains/teamcity-server:latest
+    ports:
+    - 8111:8111/tcp
+    volumes:
+    - ~/teamcity/datadir:/data/teamcity_server/datadir:rw
+    - ~/teamcity/logs:/opt/teamcity/logs:rw
+
+  agent:
+    image: jetbrains/teamcity-netcore3-agent:latest
+    depends_on:
+    - server
+    environment:
+      AGENT_NAME: dotnetcore
+      DOCKER_IN_DOCKER: start
+      SERVER_URL: server:8111
+    ports:
+    - 9090:9090/tcp
+    secrets:
+    - source: NuGetServerApiKey
+    volumes:
+    - ~/teamcity/agent-conf:/data/teamcity_agent/conf:rw
+    - agent-docker:/var/lib/docker:rw
+
+secrets:
+  NuGetServerApiKey:
+    external: true
+    name: NuGetServerApiKey
+
+volumes:
+  agent-docker: {}
