@@ -8,6 +8,8 @@ services:
     - 9.9.9.9
     - 9.9.9.10
     environment:
+      DNS1: 9.9.9.9
+      DNS2: 9.9.9.10
       TZ: UTC
       WEBPASSWORD: ${PIHOLE_WEB_PASSWORD:-76c9eca2bced3e751a47c188afe6fd9d}
     ports:
