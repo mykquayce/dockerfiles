@@ -19,16 +19,9 @@ services:
       SERVER_URL: server:8111
     ports:
     - 9090:9090/tcp
-    secrets:
-    - source: NuGetServerApiKey
     volumes:
     - ~/teamcity/agent-conf:/data/teamcity_agent/conf:rw
     - agent-docker:/var/lib/docker:rw
-
-secrets:
-  NuGetServerApiKey:
-    external: true
-    name: NuGetServerApiKey
 
 volumes:
   agent-docker: {}
