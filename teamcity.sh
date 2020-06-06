@@ -1,18 +1,27 @@
 #! /bin/bash
 
+# cleanup
 if [ -d "teamcity-docker-agent" ]; then
-  rm --force --recursive --force ./teamcity-docker-agent/
+  rm --force --recursive ./teamcity-docker-agent/
 fi
 
+# clone the agent repo
 git clone https://github.com/JetBrains/teamcity-docker-agent.git
 
+#
 pushd ./teamcity-docker-agent/
 
-sed -i -e 's/teamcity-minimal-agent:latest/jetbrains\/teamcity-minimal-agent:latest/g' ./ubuntu/Dockerfile
-sed -i -e 's/DOTNET_SDK_VERSION=2\.2\.103/DOTNET_SDK_VERSION=3.0.100/g' ./ubuntu/Dockerfile
+# modify ./ubuntu/Dockerfile
+# fully-qualify "FROM teamcity-minimal-agent:latest" on line 1
+sed --expression='s/\bFROM teamcity-minimal-agent:latest\b/FROM jetbrains\/teamcity-minimal-agent:latest/g' --in-place ./ubuntu/Dockerfile
+# change the sdk version
+sed --expression='s/\bDOTNET_SDK_VERSION=3\.1\.100\b/DOTNET_SDK_VERSION=5.0.100-preview.4.20258.7/g' --in-place ./ubuntu/Dockerfile
 
-docker build --file ./ubuntu/Dockerfile --tag jetbrains/teamcity-netcore3-agent .
+# build the image
+docker build --file ./ubuntu/Dockerfile --tag eassbhhtgu/teamcity-net5-agent:latest .
 
+#
 popd
 
-rm --force --recursive --force ./teamcity-docker-agent/
+# cleanup
+rm --force --recursive ./teamcity-docker-agent/

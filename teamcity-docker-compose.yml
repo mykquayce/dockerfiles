@@ -9,26 +9,19 @@ services:
     - ~/teamcity/datadir:/data/teamcity_server/datadir:rw
     - ~/teamcity/logs:/opt/teamcity/logs:rw
 
-  agent:
-    image: jetbrains/teamcity-netcore3-agent:latest
+  agent-dotnet5:
+    image: eassbhhtgu/teamcity-net5-agent:latest
     depends_on:
     - server
     environment:
-      AGENT_NAME: dotnetcore
+      AGENT_NAME: dotnet5
       DOCKER_IN_DOCKER: start
       SERVER_URL: server:8111
     ports:
     - 9090:9090/tcp
-    secrets:
-    - source: NuGetServerApiKey
     volumes:
-    - ~/teamcity/agent-conf:/data/teamcity_agent/conf:rw
+    - ~/teamcity/agent-conf:/data/teamcity_agent_dotnet5/conf:rw
     - agent-docker:/var/lib/docker:rw
-
-secrets:
-  NuGetServerApiKey:
-    external: true
-    name: NuGetServerApiKey
 
 volumes:
   agent-docker: {}
