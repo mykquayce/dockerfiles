@@ -1,6 +1,6 @@
 #! /bin/bash
 
-for s in mysql-root-password rabbitmq-password rabbitmq-username
+for s in mysql-root-password rabbitmq-password rabbitmq-username randomwebbrowsing_rabbitmq_pass randomwebbrowsing_rabbitmq_user
 do
   docker secret ls | tail --line +2 | grep $s >nul
 
