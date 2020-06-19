@@ -18,6 +18,7 @@ sed --expression='s/\bFROM teamcity-minimal-agent:latest\b/FROM jetbrains\/teamc
 sed --expression='s/\bDOTNET_SDK_VERSION=3\.1\.100\b/DOTNET_SDK_VERSION=5.0.100-preview.5.20279.10/g' --in-place ./ubuntu/Dockerfile
 
 # build the image
+cat ./ubuntu/Dockerfile | egrep "^FROM \S+" | awk '{system("docker pull " $2)}'
 docker build --file ./ubuntu/Dockerfile --tag eassbhhtgu/teamcity-net5-agent:latest .
 
 #
