@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+
+  baget:
+    image: loicsharma/baget:latest
+    environment:
+      ApiKey: ${NuGetServerApiKey:-8e7b324ee43b689f77c2f95b099fd6f5}
+      Storage__Type: FileSystem
+      Storage__Path: /var/baget
+      Database__Type: Sqlite
+      Database__ConnectionString: Data Source=/var/baget/baget.db
+      Search__Type: Database
+    ports:
+    - 18432:5000/tcp
+    volumes:
+    - ~/baget-data:/var/baget:rw
