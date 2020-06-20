@@ -1,14 +1,15 @@
 # find latest server software at:
 # https://www.minecraft.net/en-us/download/server/bedrock/
 
-FROM ubuntu:latest
+FROM ubuntu:latest AS unzip
 
-RUN apt-get update
-RUN apt-get install -y unzip curl libcurl4 libssl1.0.0
-RUN curl https://minecraft.azureedge.net/bin-linux/bedrock-server-1.12.1.1.zip --output bedrock-server.zip
-RUN unzip bedrock-server.zip -d bedrock-server
-RUN rm bedrock-server.zip
+RUN apt-get update && apt-get install --assume-yes unzip curl libcurl4 libssl1.1
+RUN curl https://minecraft.azureedge.net/bin-linux/bedrock-server-1.14.60.5.zip --output bedrock-server.zip
+RUN unzip bedrock-server.zip -d bedrock-server -x *.debug
 
+FROM ubuntu:latest AS run
+RUN apt-get update && apt-get install --assume-yes libcurl4
 WORKDIR /bedrock-server
+COPY --from=unzip /bedrock-server .
 ENV LD_LIBRARY_PATH=.
 CMD ./bedrock_server
