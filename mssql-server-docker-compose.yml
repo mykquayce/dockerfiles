@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${MSSQL_SERVER_SA_PASSWORD:-FFe$PPI!^^V1a:`U9YfV=eb;LPB1+DhFKSkVuDkaZ9W$EgdP9wt*"?HzkbGOYg3K}
+      TZ: "UTC"
+    ports:
+    - 1433:1433/tcp
+    volumes:
+    - ~/mssql-data:/var/opt/mssql/data:rw
+    - ~/mssql-log:/var/opt/mssql/log:rw
