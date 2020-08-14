@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  portainer:
+    image: portainer/portainer:latest
+    command: -H unix:///var/run/docker.sock
+    ports:
+    - 8000:8000/tcp
+    - 9000:9000/tcp
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+    - ~/portainer-data:/data:rw
