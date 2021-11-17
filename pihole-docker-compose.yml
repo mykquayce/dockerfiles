@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   pihole:
-    image: pihole/pihole:latest
+    image: eassbhhtgu/pihole:latest
     dns:
     - 127.0.0.1
     - 9.9.9.9
@@ -16,8 +16,8 @@ services:
     - 53:53/tcp
     - 53:53/udp
     - 67:67/udp
-    - 80:80/tcp
-    - 443:443/tcp
+    - 40080:80/tcp
+    - 40443:443/tcp
     restart: unless-stopped
     volumes:
     - pihole-volume-pihole:/etc/pihole/:rw
