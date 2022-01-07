@@ -16,8 +16,8 @@ services:
     - 53:53/tcp
     - 53:53/udp
     - 67:67/udp
-    - 40080:80/tcp
-    - 40443:443/tcp
+    - 80:80/tcp
+    - 443:443/tcp
     restart: unless-stopped
     volumes:
     - pihole-volume-pihole:/etc/pihole/:rw
