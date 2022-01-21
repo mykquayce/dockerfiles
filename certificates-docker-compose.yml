@@ -1,8 +1,0 @@
-version: '3.7'
-
-services:
-
-  vm:
-    image: eassbhhtgu/certificates:latest
-    volumes:
-    - ~/.aspnet/https:/usr/certs:rw

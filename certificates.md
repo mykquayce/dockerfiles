@@ -1,8 +1,10 @@
+powershell
 ```powershell
-docker build --file ./certificates-dockerfile --tag eassbhhtgu/certificates:latest .
-docker run --interactive=true --tty=true --volume "${env:userprofile}\.aspnet\https:/usr/certs:rw" eassbhhtgu/certificates:latest sh
+docker run --interactive=true --rm --tty=true --volume "${env:userprofile}\.aspnet\https:/usr/certs:rw" alpine:latest sh
 ```
+shell
 ```bash
+apk add openssl
 cd /usr/certs/
 openssl genrsa -aes256 -out ca.key 4096
 openssl req -new -x509 -days 365 -key ca.key -subj "/C=UK/ST=Manchester/L=Manchester/O=sarif/OU=systems/CN=sarif inc" -out ca.crt
