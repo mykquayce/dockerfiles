@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   pihole:
-    image: eassbhhtgu/pihole:latest
+    image: pihole/pihole:latest
     dns:
     - 127.0.0.1
     - 9.9.9.9

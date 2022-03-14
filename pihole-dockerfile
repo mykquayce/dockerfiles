@@ -1,3 +1,0 @@
-FROM pihole/pihole:latest
-RUN /usr/local/bin/pihole whitelist gateway.docker.internal
-SHELL ["/bin/bash", "-c"]
