@@ -3,12 +3,24 @@ version: '3.7'
 services:
   mariadb:
     image: mariadb:latest
-    ports:
-    - 3306:3306/tcp
+    command: /bin/sh -c "mkdir --parents /usr/certs/
+        && openssl x509 -in /run/secrets/ca.crt -out /usr/certs/ca.pem -outform PEM \
+        && openssl x509 -in /run/secrets/server.crt -out /usr/certs/server.pem -outform PEM \
+        && openssl rsa -in /run/secrets/server.key -text > /usr/certs/server_key.pem \
+        && docker-entrypoint.sh mariadbd \
+            --require_secure_transport=ON \
+            --ssl-ca=/usr/certs/ca.pem \
+            --ssl-cert=/usr/certs/server.pem \
+            --ssl-key=/usr/certs/server_key.pem"
     environment:
     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-root-password
+    ports:
+    - 3306:3306/tcp
     secrets:
     - source: mysql-root-password
+    - source: ca.crt
+    - source: server.crt
+    - source: server.key
     volumes:
     - mariadb-volume:/var/lib/mysql:rw
 
@@ -16,6 +28,12 @@ secrets:
   mysql-root-password:
     external: true
     name: mysql-root-password
+  ca.crt:
+    file: ${USERPROFILE}\.aspnet\https\ca.crt
+  server.crt:
+    file: ${USERPROFILE}\.aspnet\https\mariadb.crt
+  server.key:
+    file: ${USERPROFILE}\.aspnet\https\mariadb.key
 
 volumes:
   mariadb-volume: {}
