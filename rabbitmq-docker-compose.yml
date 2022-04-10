@@ -3,25 +3,51 @@ version: '3.7'
 services:
   rabbitmq:
     image: rabbitmq:management
-    environment:
-    - RABBITMQ_DEFAULT_PASS_FILE=/run/secrets/rabbitmq-password
-    - RABBITMQ_DEFAULT_USER_FILE=/run/secrets/rabbitmq-username
+    command: /bin/bash -c "mkdir --parents /etc/rabbitmq/ssl/ \
+        && openssl x509 -in /run/secrets/ca.crt -out /etc/rabbitmq/ssl/ca.pem -outform PEM \
+        && openssl x509 -in /run/secrets/server.crt -out /etc/rabbitmq/ssl/server.pem -outform PEM \
+        && openssl rsa -in /run/secrets/server.key -text > /etc/rabbitmq/ssl/server_key.pem \
+        && echo default_pass = $$(cat /run/secrets/password) >> /etc/rabbitmq/rabbitmq.conf \
+        && echo default_user = $$(cat /run/secrets/username) >> /etc/rabbitmq/rabbitmq.conf \
+        && echo listeners.ssl.default = 5671 >> /etc/rabbitmq/rabbitmq.conf \
+        && echo listeners.tcp = none >> /etc/rabbitmq/rabbitmq.conf \
+        && echo management.ssl.port = 15671 >> /etc/rabbitmq/rabbitmq.conf \
+        && echo management.ssl.cacertfile = /etc/rabbitmq/ssl/ca.pem >> /etc/rabbitmq/rabbitmq.conf \
+        && echo management.ssl.certfile = /etc/rabbitmq/ssl/server.pem >> /etc/rabbitmq/rabbitmq.conf \
+        && echo management.ssl.keyfile = /etc/rabbitmq/ssl/server_key.pem >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.cacertfile = /etc/rabbitmq/ssl/ca.pem >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.certfile = /etc/rabbitmq/ssl/server.pem >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.keyfile = /etc/rabbitmq/ssl/server_key.pem >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.verify = verify_peer >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.versions.1 = tlsv1.3 >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.versions.2 = tlsv1.2 >> /etc/rabbitmq/rabbitmq.conf \
+        && echo ssl_options.versions.3 = tlsv1.1 >> /etc/rabbitmq/rabbitmq.conf \
+        && rabbitmq-server"
     ports:
-    - 5672:5672/tcp
-    - 15672:15672/tcp
+    - 5671:5671/tcp
+    - 15671:15671/tcp
     secrets:
-    - source: rabbitmq-password
-    - source: rabbitmq-username
+    - source: password
+    - source: username
+    - source: ca.crt
+    - source: server.crt
+    - source: server.key
     volumes:
     - rabbitmq-volume:/var/lib/rabbitmq:rw
 
 secrets:
-  rabbitmq-password:
+  password:
     external: true
     name: rabbitmq-password
-  rabbitmq-username:
+  username:
     external: true
     name: rabbitmq-username
+  ca.crt:
+    file: ${USERPROFILE}\.aspnet\https\ca.crt
+  server.crt:
+    file: ${USERPROFILE}\.aspnet\https\rabbitmq.crt
+  server.key:
+    file: ${USERPROFILE}\.aspnet\https\rabbitmq.key
 
 volumes:
   rabbitmq-volume: {}
