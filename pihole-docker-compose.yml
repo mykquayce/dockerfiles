@@ -3,6 +3,11 @@ version: '3.7'
 services:
   pihole:
     image: pihole/pihole:latest
+    command: /bin/sh -c "openssl x509 -in /usr/certs/localhost.crt -out /usr/certs/localhost.pem -outform PEM \
+        && openssl rsa -in /usr/certs/localhost.key -text > /usr/certs/localhost_key.pem \
+        && cat /usr/certs/localhost_key.pem /usr/certs/localhost.pem | tee /etc/lighttpd/server.pem \
+        && /usr/sbin/lighty-enable-mod ssl \
+        && while true; do sleep 86400; done"
     dns:
     - 127.0.0.1
     - 9.9.9.9
@@ -16,12 +21,22 @@ services:
     - 53:53/tcp
     - 53:53/udp
     - 67:67/udp
-    - 80:80/tcp
     - 443:443/tcp
     restart: unless-stopped
+    secrets:
+    - source: localhost.crt
+      target: /usr/certs/localhost.crt
+    - source: localhost.key
+      target: /usr/certs/localhost.key
     volumes:
     - pihole-volume-pihole:/etc/pihole/:rw
     - pihole-volume-dnsmasq:/etc/dnsmasq.d/:rw
+
+secrets:
+  localhost.crt:
+    file: ${USERPROFILE}\.aspnet\https\localhost.crt
+  localhost.key:
+    file: ${USERPROFILE}\.aspnet\https\localhost.key
 
 volumes:
   pihole-volume-dnsmasq: {}
